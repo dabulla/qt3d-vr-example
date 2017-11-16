@@ -167,8 +167,8 @@ void VirtualRealityApiOvr::getEyeMatrices(QMatrix4x4 &leftEye, QMatrix4x4 &right
     eyeRenderDesc[ovrEye_Left] = ovr_GetRenderDesc(m_session, ovrEye_Left, m_hmdDesc.DefaultEyeFov[ovrEye_Left]);
     eyeRenderDesc[ovrEye_Right] = ovr_GetRenderDesc(m_session, ovrEye_Right, m_hmdDesc.DefaultEyeFov[ovrEye_Right]);
     // Get eye poses, feeding in correct IPD offset
-    ovrVector3f               HmdToEyeOffset[2] = { eyeRenderDesc[ovrEye_Left].HmdToEyeOffset,
-                                                    eyeRenderDesc[ovrEye_Right].HmdToEyeOffset };
+    ovrPosef               HmdToEyeOffset[2] = { eyeRenderDesc[ovrEye_Left].HmdToEyePose,
+                                                    eyeRenderDesc[ovrEye_Right].HmdToEyePose };
 
 
     ovr_GetEyePoses(m_session, m_frameIndex, ovrTrue, HmdToEyeOffset, m_eyeRenderPose, &m_sensorSampleTime);
@@ -209,10 +209,11 @@ void VirtualRealityApiOvr::getProjectionMatrices(QMatrix4x4 &leftProjection, QMa
     //TODO: don't copy
 }
 
-int VirtualRealityApiOvr::numberOfTrackedObjects()
+QList<int> VirtualRealityApiOvr::currentlyTrackedObjects()
 {
     //TODO: does this work?
-    return ovr_GetTrackerCount(m_session);
+    //return ovr_GetTrackerCount(m_session);
+    return QList<int>();
 }
 
 void VirtualRealityApiOvr::getTrackedObject(int id, QMatrix4x4 &transform)
@@ -225,12 +226,7 @@ Qt3DVirtualReality::QVirtualRealityApiBackend::TrackedObjectType VirtualRealityA
     return Qt3DVirtualReality::QVirtualRealityApiBackend::Other;
 }
 
-void VirtualRealityApiOvr::getTrackedObjectVertices(int id, QVector<float> &vertices)
-{
-
-}
-
-void VirtualRealityApiOvr::getTrackedObjectTexture(int id, QOpenGLTexture *texture)
+void VirtualRealityApiOvr::getTrackedObjectModel(int id, QVector<float> &vertices, QVector<int> &indices, QOpenGLTexture *texture)
 {
 
 }

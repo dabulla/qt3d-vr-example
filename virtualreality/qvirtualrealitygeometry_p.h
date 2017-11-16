@@ -17,6 +17,7 @@
 #define QT3DEXTRAS_QVIRTUALREALITYGEOMETRY_P_H
 
 #include <Qt3DRender/private/qgeometry_p.h>
+#include <qvirtualrealityapibackend.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -38,13 +39,7 @@ public:
 
     Q_DECLARE_PUBLIC(QVirtualRealityGeometry)
 
-    bool m_hasTopEndcap;
-    bool m_hasBottomEndcap;
-    int m_rings;
-    int m_slices;
-    float m_topRadius;
-    float m_bottomRadius;
-    float m_length;
+    int m_trackedObjectIndex;
     Qt3DRender::QAttribute *m_positionAttribute;
     Qt3DRender::QAttribute *m_normalAttribute;
     Qt3DRender::QAttribute *m_texCoordAttribute;
@@ -52,6 +47,7 @@ public:
     Qt3DRender::QBuffer *m_positionBuffer;
     Qt3DRender::QBuffer *m_vertexBuffer;
     Qt3DRender::QBuffer *m_indexBuffer;
+    QVirtualRealityApiBackend *m_apibackend;
 };
 
 } // Qt3DVirtualReality

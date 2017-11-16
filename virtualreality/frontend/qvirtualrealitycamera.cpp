@@ -26,7 +26,8 @@ QVirtualrealityCamera::QVirtualrealityCamera(QNode *parent)
      m_leftCameraLens(new Qt3DRender::QCameraLens(parent)),//m_leftCamera)),
      m_rightCameraLens(new Qt3DRender::QCameraLens(parent)),//m_rightCamera)),
      m_leftTransform(new Qt3DCore::QTransform(parent)),//m_leftCamera)),
-     m_rightTransform(new Qt3DCore::QTransform(parent))//m_rightCamera))
+     m_rightTransform(new Qt3DCore::QTransform(parent)),//m_rightCamera)),
+     m_apibackend(nullptr)
 {
     m_leftCamera->addComponent(m_leftCameraLens);
     m_rightCamera->addComponent(m_rightCameraLens);
@@ -138,6 +139,25 @@ QRectF QVirtualrealityCamera::rightNormalizedViewportRect() const
 QQuaternion QVirtualrealityCamera::offsetOrientation() const
 {
     return m_offsetOrientation;
+}
+
+QMatrix4x4 QVirtualrealityCamera::trackedObjectMatrixTmp(int trackedObjectId)
+{
+    if(!m_apibackend) return QMatrix4x4();
+    QMatrix4x4 mat;
+    m_apibackend->getTrackedObject(trackedObjectId, mat);
+    return mat;
+}
+
+QList<int> QVirtualrealityCamera::trackedObjectsTmp()
+{
+    if(!m_apibackend) return QList<int>();
+    return m_apibackend->currentlyTrackedObjects();
+}
+
+void QVirtualrealityCamera::setVrBackendTmp(QVirtualRealityApiBackend *backend)
+{
+    m_apibackend = backend;
 }
 
 void QVirtualrealityCamera::setOffset(QVector3D offset)

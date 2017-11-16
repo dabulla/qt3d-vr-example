@@ -17,6 +17,7 @@
 
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
+#include <QThread>
 
 //// Process SteamVR controller state
 //for( vr::TrackedDeviceIndex_t unDevice = 0; unDevice < vr::k_unMaxTrackedDeviceCount; unDevice++ )
@@ -100,6 +101,10 @@ QMatrix4x4 VirtualRealityApiOpenVR::getCurrentViewMatrix( vr::Hmd_Eye nEye )
 //-----------------------------------------------------------------------------
 void VirtualRealityApiOpenVR::updateHmdMatrixPose()
 {
+    // This queries the pose for user. User gets a good estimation of the HMD pose that will be used.
+    // However, the engine is free to use a newer estimation for the head pose for rendering, than returned here.
+    // Only one estimation will be made on the first request of poses per frame.
+    // This way e.g. not every qml binding will query the vr sdk on its own.
     if(m_poseNewEnough)
         return;
     m_poseNewEnough = true;
@@ -259,6 +264,7 @@ QMatrix4x4 VirtualRealityApiOpenVR::headPose(int hmdId)
 
 QSize VirtualRealityApiOpenVR::getRenderTargetSize()
 {
+    if ( !m_hmd ) return QSize(0, 0);
     uint32_t width, height;
     m_hmd->GetRecommendedRenderTargetSize( &width, &height );
     return QSize(width*2, height);
@@ -296,14 +302,27 @@ void VirtualRealityApiOpenVR::getProjectionMatrices(QMatrix4x4 &leftProjection, 
     rightProjection = getHmdMatrixProjectionEye( vr::Eye_Right );
 }
 
-int VirtualRealityApiOpenVR::numberOfTrackedObjects()
+QList<int> VirtualRealityApiOpenVR::currentlyTrackedObjects()
 {
-    return 1;
+    QList<int> tracked;
+    for( uint32_t unTrackedDevice = vr::k_unTrackedDeviceIndex_Hmd + 1; unTrackedDevice < vr::k_unMaxTrackedDeviceCount; unTrackedDevice++ ) {
+        if( m_hmd->IsTrackedDeviceConnected( unTrackedDevice ) )
+            tracked.push_back(unTrackedDevice);
+    }
+    return tracked;
 }
 
 void VirtualRealityApiOpenVR::getTrackedObject(int id, QMatrix4x4 &transform)
 {
-
+    if( id >= vr::k_unMaxTrackedDeviceCount) {
+        qWarning("Requested tracked object: Index out of bounds.");
+        return;
+    }
+    if( !m_hmd->IsTrackedDeviceConnected( id ) ) {
+        qWarning("Requested VR Device was not connected.");
+        return;
+    }
+    transform = m_devicePose[ id ];
 }
 
 Qt3DVirtualReality::QVirtualRealityApiBackend::TrackedObjectType VirtualRealityApiOpenVR::getTrackedObjectType(int id)
@@ -311,14 +330,61 @@ Qt3DVirtualReality::QVirtualRealityApiBackend::TrackedObjectType VirtualRealityA
     return Qt3DVirtualReality::QVirtualRealityApiBackend::Other;
 }
 
-void VirtualRealityApiOpenVR::getTrackedObjectVertices(int id, QVector<float> &vertices)
+void VirtualRealityApiOpenVR::getTrackedObjectModel(int id, QVector<float> &vertices, QVector<int> &indices, QOpenGLTexture *texture)
 {
+    if( id >= vr::k_unMaxTrackedDeviceCount) {
+        qWarning("Requested tracked object vertices: Index out of bounds.");
+        return;
+    }
 
-}
+    std::string sRenderModelName = getTrackedDeviceString( m_hmd, id, vr::Prop_RenderModelName_String );
 
-void VirtualRealityApiOpenVR::getTrackedObjectTexture(int id, QOpenGLTexture *texture)
-{
+    //TODO: load renderModels only once
 
+    vr::RenderModel_t *pModel;
+    vr::EVRRenderModelError error;
+    while ( 1 ) {
+        error = vr::VRRenderModels()->LoadRenderModel_Async( sRenderModelName.c_str(), &pModel );
+        if ( error != vr::VRRenderModelError_Loading )
+            break;
+        QThread::currentThread()->sleep( 1 );
+    }
+
+    if ( error != vr::VRRenderModelError_None ) {
+        qWarning( "Unable to load render model %s - %s\n", sRenderModelName, vr::VRRenderModels()->GetRenderModelErrorNameFromEnum( error ) );
+        return;
+    }
+
+    vr::RenderModel_TextureMap_t *pTexture;
+    while ( 1 ) {
+        error = vr::VRRenderModels()->LoadTexture_Async( pModel->diffuseTextureId, &pTexture );
+        if ( error != vr::VRRenderModelError_Loading )
+            break;
+        QThread::currentThread()->sleep( 1 );
+    }
+
+    if ( error != vr::VRRenderModelError_None ) {
+        qWarning( "Unable to load render texture id:%d for render model %s\n", pModel->diffuseTextureId, sRenderModelName );
+        vr::VRRenderModels()->FreeRenderModel( pModel );
+        return;
+    }
+
+    //Position, Normal, Texture
+    vertices.resize(pModel->unVertexCount * (3 + 3 + 2));
+    memcpy(vertices.data(), pModel->rVertexData, sizeof(float) * vertices.size());
+    indices.resize(pModel->unTriangleCount * 3);
+    for(int i=0; i<pModel->unTriangleCount; i++) {
+        indices[i*3  ] = pModel->rIndexData[i*3  ];
+        indices[i*3+1] = pModel->rIndexData[i*3+1];
+        indices[i*3+2] = pModel->rIndexData[i*3+2];
+    }
+
+    //texture = new QOpenGLTexture(QOpenGLTexture::BindingTarget2D);
+    texture->setSize(pTexture->unWidth, pTexture->unHeight);
+    texture->setData( QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, pTexture->rubTextureMapData );
+
+    vr::VRRenderModels()->FreeRenderModel( pModel );
+    vr::VRRenderModels()->FreeTexture( pTexture );
 }
 
 void VirtualRealityApiOpenVR::getMirrorTexture(QOpenGLTexture *outMirrorTexture)

@@ -34,7 +34,7 @@
 #include <Qt3DRender/private/qrenderaspect_p.h>
 #include <Qt3DCore/private/qabstractaspectjobmanager_p.h>
 #include "frontend/qvirtualrealitycamera.h"
-
+#include "frontend/qvirtualrealitymesh.h"
 #include <QOpenGLDebugLogger>
 
 QT_BEGIN_NAMESPACE
@@ -166,6 +166,7 @@ void QHeadMountedDisplay::setSource(const QUrl &source)
 
 
         qmlRegisterType<QVirtualrealityCamera>("vr", 2, 0, "VrCamera");
+        qmlRegisterType<QVirtualRealityMesh>("vr", 2, 0, "TrackedObjectMesh");
         m_engine->setSource(m_source);
 
         // Set the QQmlIncubationController on the window
@@ -282,16 +283,24 @@ void QHeadMountedDisplay::run() {
 //            scheduleRootEntityChange();
     //TODO: QVrSelector. This is the object with all parameters then
     QVirtualrealityCamera *vrCamera(nullptr);
-    if(m_rootItem)
+    QList<QVirtualRealityMesh*> vrGeometries;
+    if(m_rootItem) {
         vrCamera = m_rootItem->findChild<QVirtualrealityCamera *>();
+        QList<QVirtualRealityMesh*> vrGeometries = m_rootItem->findChildren<QVirtualRealityMesh*>();
+    }
     m_apibackend->bindFrambufferObject(m_hmdId);
+    for(QList<QVirtualRealityMesh*>::iterator iter(vrGeometries.begin()); iter != vrGeometries.end(); ++iter) {
+        (*iter)->setVrApiBackendTmp(m_apibackend);
+    }
     //static_cast<Qt3DRender::QRenderAspectPrivate*>(Qt3DRender::QRenderAspectPrivate::get(m_renderAspect))->jobManager()->waitForAllJobs();
     static_cast<Qt3DRender::QRenderAspectPrivate*>(Qt3DRender::QRenderAspectPrivate::get(m_renderAspect))->renderSynchronous();
     QMatrix4x4 leftEye;
     QMatrix4x4 rightEye;
     m_apibackend->getEyeMatrices(leftEye, rightEye);
-    if(vrCamera != nullptr)
+    if(vrCamera != nullptr) {
         vrCamera->update(leftEye, rightEye);
+        vrCamera->setVrBackendTmp(m_apibackend); // only for transforms
+    }
     m_fbo->bindDefault();
     m_apibackend->swapToHeadset();
     emit requestRun();

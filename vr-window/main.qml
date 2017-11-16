@@ -72,4 +72,39 @@ Entity {
             ]
         }
     }
+    NodeInstantiator {
+        id: trackedObjectsRepeater
+        // TO DO: a model does not yet work here (array with indices). temporarily using a number
+        model: 5 // default: 1 -> head, 2&3 -> base station, 4&5 -> controller/hands
+        delegate: Entity {
+            Timer {
+                running: true
+                repeat: true
+                interval: 1
+                onTriggered: {
+                    // this is a temporary workaround and there are no property change events here
+                    trackedTransform.matrix = vrCam.trackedObjectMatrixTmp(index+1)
+                }
+            }
+            components: [
+//                TrackedObjectMesh {
+//                    trackedObjectId: index+1
+//                }
+                TorusMesh {
+                    radius: 0.1
+                    minorRadius: 0.05
+                    rings: 100
+                    slices: 20
+                },
+                Transform {
+                    id: trackedTransform
+                },
+                PhongMaterial {
+                    diffuse: Qt.rgba(Math.abs(Math.cos(0.5)), 204 / 255, 75 / 255, 1)
+                    specular: "white"
+                    shininess: 20.0
+                }
+            ]
+        }
+    }
 }

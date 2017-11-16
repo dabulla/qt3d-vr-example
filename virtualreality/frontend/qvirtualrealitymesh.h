@@ -22,45 +22,27 @@ QT_BEGIN_NAMESPACE
 
 namespace Qt3DVirtualReality {
 
+class QVirtualRealityApiBackend; //TO DO: temp
+
 class QT3DVR_EXPORT QVirtualRealityMesh : public Qt3DRender::QGeometryRenderer
 {
     Q_OBJECT
-    Q_PROPERTY(int rings READ rings WRITE setRings NOTIFY ringsChanged)
-    Q_PROPERTY(int slices READ slices WRITE setSlices NOTIFY slicesChanged)
-    Q_PROPERTY( bool hasTopEndcap READ hasTopEndcap WRITE setHasTopEndcap NOTIFY hasTopEndcapChanged )
-    Q_PROPERTY( bool hasBottomEndcap READ hasBottomEndcap WRITE setHasBottomEndcap NOTIFY hasBottomEndcapChanged )
-    Q_PROPERTY( float topRadius READ topRadius WRITE setTopRadius NOTIFY topRadiusChanged )
-    Q_PROPERTY( float bottomRadius READ bottomRadius WRITE setBottomRadius NOTIFY bottomRadiusChanged )
-    Q_PROPERTY(float length READ length WRITE setLength NOTIFY lengthChanged)
+    Q_PROPERTY(int trackedObjectId READ trackedObjectId WRITE setTrackedObjectId NOTIFY trackedObjectIdChanged)
 public:
     explicit QVirtualRealityMesh(Qt3DCore::QNode *parent = nullptr);
     ~QVirtualRealityMesh();
 
-    int rings() const;
-    int slices() const;
-    bool hasTopEndcap() const;
-    bool hasBottomEndcap() const;
-    float topRadius() const;
-    float bottomRadius() const;
-    float length() const;
+    int trackedObjectId() const;
+
+    void setVrApiBackendTmp(QVirtualRealityApiBackend *apibackend); //TO DO: temp
 
 public Q_SLOTS:
-    void setHasTopEndcap( bool hasTopEndcap );
-    void setHasBottomEndcap( bool hasBottomEndcap );
-    void setTopRadius( float topRadius );
-    void setBottomRadius( float bottomRadius );
-    void setRings( int rings );
-    void setSlices( int slices );
-    void setLength( float length );
+
+    void setTrackedObjectId(int trackedObjectId);
 
 Q_SIGNALS:
-    void hasTopEndcapChanged( bool hasTopEndcap );
-    void hasBottomEndcapChanged( bool hasBottomEndcap );
-    void topRadiusChanged( float topRadius );
-    void bottomRadiusChanged( float bottomRadius );
-    void ringsChanged( int rings );
-    void slicesChanged( int slices );
-    void lengthChanged( float length );
+
+    void trackedObjectIdChanged(int trackedObjectId);
 
 private:
     // As this is a default provided geometry renderer, no one should be able
@@ -74,6 +56,7 @@ private:
     void setPrimitiveRestartEnabled(bool enabled);
     void setGeometry(Qt3DRender::QGeometry *geometry);
     void setPrimitiveType(PrimitiveType primitiveType);
+    int m_trackedObjectId;
 };
 
 } // namespace Qt3DVirtualReality

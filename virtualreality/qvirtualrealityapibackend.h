@@ -95,11 +95,10 @@ public:
      */
     virtual void getProjectionMatrices(QMatrix4x4 &leftProjection, QMatrix4x4 &rightProjection) = 0;
 
-    virtual int numberOfTrackedObjects() = 0;
+    virtual QList<int> currentlyTrackedObjects() = 0;
     virtual void getTrackedObject(int id, QMatrix4x4 &transform) = 0;
     virtual TrackedObjectType getTrackedObjectType(int id) = 0;
-    virtual void getTrackedObjectVertices(int id, QVector<float> &vertices) = 0;
-    virtual void getTrackedObjectTexture(int id, QOpenGLTexture *texture) = 0;
+    virtual void getTrackedObjectModel(int id, QVector<float> &vertices, QVector<int> &indices, QOpenGLTexture *texture) = 0;
 
     /*!
      * \brief getMirrorTexture

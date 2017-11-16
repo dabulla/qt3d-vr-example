@@ -18,6 +18,7 @@
 #include <Qt3DCore/QEntity>
 #include <Qt3DCore/QTransform>
 #include <Qt3DRender/QCameraLens>
+#include <qvirtualrealityapibackend.h> //TO DO: THis include is only for transforms over camera
 
 QT_BEGIN_NAMESPACE
 
@@ -56,6 +57,11 @@ public:
     QRectF rightNormalizedViewportRect() const;
     QQuaternion offsetOrientation() const;
 
+    // Transforms should be handled by special "VrTransform" Class, which has two backend nodes (one in renderaspect and one in vr aspect).
+    // Then it should always uptade before rendering. For the moment, this will create a minimium viable product.
+    Q_INVOKABLE QMatrix4x4 trackedObjectMatrixTmp(int trackedObjectId);
+    Q_INVOKABLE QList<int> trackedObjectsTmp();
+    void setVrBackendTmp(QVirtualRealityApiBackend* backend); //only for trackedObjectMatrixTmp
 public Q_SLOTS:
 
     void setOffset(QVector3D offset);
@@ -93,6 +99,8 @@ private:
     QRectF m_leftNormalizedViewportRect;
     QRectF m_rightNormalizedViewportRect;
     QQuaternion m_offsetOrientation;
+    QVirtualRealityApiBackend *m_apibackend; //TO DO: tmp
+
 };
 
 } // namespace Qt3DVirtualReality

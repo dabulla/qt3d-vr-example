@@ -12,7 +12,7 @@
 //**
 //****************************************************************************/
 
-#include "QVirtualRealityMesh.h"
+#include "qvirtualrealitymesh.h"
 
 // TO DO: Refactor from Cone
 
@@ -68,13 +68,7 @@ QVirtualRealityMesh::QVirtualRealityMesh(QNode *parent)
     : QGeometryRenderer(parent)
 {
     QVirtualRealityGeometry *geometry = new QVirtualRealityGeometry(this);
-    QObject::connect(geometry, &QVirtualRealityGeometry::hasTopEndcapChanged, this, &QVirtualRealityMesh::hasTopEndcapChanged);
-    QObject::connect(geometry, &QVirtualRealityGeometry::hasBottomEndcapChanged, this, &QVirtualRealityMesh::hasBottomEndcapChanged);
-    QObject::connect(geometry, &QVirtualRealityGeometry::topRadiusChanged, this, &QVirtualRealityMesh::topRadiusChanged);
-    QObject::connect(geometry, &QVirtualRealityGeometry::bottomRadiusChanged, this, &QVirtualRealityMesh::bottomRadiusChanged);
-    QObject::connect(geometry, &QVirtualRealityGeometry::ringsChanged, this, &QVirtualRealityMesh::ringsChanged);
-    QObject::connect(geometry, &QVirtualRealityGeometry::slicesChanged, this, &QVirtualRealityMesh::slicesChanged);
-    QObject::connect(geometry, &QVirtualRealityGeometry::lengthChanged, this, &QVirtualRealityMesh::lengthChanged);
+    QObject::connect(geometry, &QVirtualRealityGeometry::trackedObjectIndexChanged, this, &QVirtualRealityMesh::trackedObjectIdChanged);
 
     QGeometryRenderer::setGeometry(geometry);
 }
@@ -84,109 +78,19 @@ QVirtualRealityMesh::~QVirtualRealityMesh()
 {
 }
 
-void QVirtualRealityMesh::setHasTopEndcap(bool hasTopEndcap)
+int QVirtualRealityMesh::trackedObjectId() const
 {
-    static_cast<QVirtualRealityGeometry *>(geometry())->setHasTopEndcap(hasTopEndcap);
+    return static_cast<QVirtualRealityGeometry *>(geometry())->trackedObjectIndex();
 }
 
-void QVirtualRealityMesh::setHasBottomEndcap(bool hasBottomEndcap)
+void QVirtualRealityMesh::setVrApiBackendTmp(QVirtualRealityApiBackend *apibackend)
 {
-    static_cast<QVirtualRealityGeometry *>(geometry())->setHasBottomEndcap(hasBottomEndcap);
+    static_cast<QVirtualRealityGeometry *>(geometry())->setVrApiBackendTmp(apibackend);
 }
 
-void QVirtualRealityMesh::setTopRadius(float topRadius)
+void QVirtualRealityMesh::setTrackedObjectId(int trackedObjectId)
 {
-    static_cast<QVirtualRealityGeometry *>(geometry())->setTopRadius(topRadius);
-}
-
-void QVirtualRealityMesh::setBottomRadius(float bottomRadius)
-{
-    static_cast<QVirtualRealityGeometry *>(geometry())->setBottomRadius(bottomRadius);
-}
-
-void QVirtualRealityMesh::setRings(int rings)
-{
-    static_cast<QVirtualRealityGeometry *>(geometry())->setRings(rings);
-}
-
-void QVirtualRealityMesh::setSlices(int slices)
-{
-    static_cast<QVirtualRealityGeometry *>(geometry())->setSlices(slices);
-}
-
-void QVirtualRealityMesh::setLength(float length)
-{
-    static_cast<QVirtualRealityGeometry *>(geometry())->setLength(length);
-}
-
-/*!
- * \property QVirtualRealityMesh::hasTopEndcap
- *
- * Determines if the virtualreality top is capped or open.
- */
-bool QVirtualRealityMesh::hasTopEndcap() const
-{
-    return static_cast<QVirtualRealityGeometry *>(geometry())->hasTopEndcap();
-}
-
-/*!
- * \property QVirtualRealityMesh::hasBottomEndcap
- *
- * Determines if the virtualreality bottom is capped or open.
- */
-bool QVirtualRealityMesh::hasBottomEndcap() const
-{
-    return static_cast<QVirtualRealityGeometry *>(geometry())->hasBottomEndcap();
-}
-
-/*!
- * \property QVirtualRealityMesh::topRadius
- *
- * Holds the top radius of the virtualreality.
- */
-float QVirtualRealityMesh::topRadius() const
-{
-    return static_cast<QVirtualRealityGeometry *>(geometry())->topRadius();
-}
-
-/*!
- * \property QVirtualRealityMesh::bottomRadius
- *
- * Holds the bottom radius of the virtualreality.
- */
-float QVirtualRealityMesh::bottomRadius() const
-{
-    return static_cast<QVirtualRealityGeometry *>(geometry())->bottomRadius();
-}
-
-/*!
- * \property QVirtualRealityMesh::rings
- *
- * Holds the number of rings in the mesh.
- */
-int QVirtualRealityMesh::rings() const
-{
-    return static_cast<QVirtualRealityGeometry *>(geometry())->rings();
-}
-
-/*!
- * \property QVirtualRealityMesh::slices
- *
- * Holds the number of slices in the mesh.
- */
-int QVirtualRealityMesh::slices() const
-{
-    return static_cast<QVirtualRealityGeometry *>(geometry())->slices();
-}
-
-/*!
- * \property QVirtualRealityMesh::length
- *
- * Holds the length of the virtualreality.
- */
-float QVirtualRealityMesh::length() const
-{
-    return static_cast<QVirtualRealityGeometry *>(geometry())->length();
+    static_cast<QVirtualRealityGeometry *>(geometry())->setTrackedObjectIndex(trackedObjectId);
 }
 
 }

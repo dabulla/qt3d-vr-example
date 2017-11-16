@@ -44,11 +44,10 @@ public:
 
     void getProjectionMatrices(QMatrix4x4 &leftProjection, QMatrix4x4 &rightProjection);
 
-    int numberOfTrackedObjects();
-    void getTrackedObject(int id,QMatrix4x4 &transform);
+    QList<int> currentlyTrackedObjects();
+    void getTrackedObject(int id, QMatrix4x4 &transform);
     TrackedObjectType getTrackedObjectType(int id);
-    void getTrackedObjectVertices(int id, QVector<float> &vertices);
-    void getTrackedObjectTexture(int id, QOpenGLTexture *texture);
+    void getTrackedObjectModel(int id, QVector<float> &vertices, QVector<int> &indices, QOpenGLTexture *texture);
 
     void getMirrorTexture(QOpenGLTexture *outMirrorTexture);
 
