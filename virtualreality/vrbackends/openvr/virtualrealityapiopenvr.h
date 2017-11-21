@@ -77,6 +77,7 @@ private:
     QMatrix4x4 getCurrentViewMatrix(vr::Hmd_Eye nEye);
     void updateHmdMatrixPose();
     QMatrix4x4 convertSteamVrMatrixToQMatrix4x4(const vr::HmdMatrix34_t matPose);
+    QMatrix4x4 convertSteamVrMatrixToQMatrix4x4(const vr::HmdMatrix44_t matPose);
     void processVrEvent(const vr::VREvent_t &event);
     void setupCameras();
     bool m_poseNewEnough; //TO DO: openvr in example only updates poses once a frame

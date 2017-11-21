@@ -62,7 +62,9 @@ HEADERS += \
 if($$WITH_VR_SDK_OPENVR) {
   message("Building with OpenVR support")
   INCLUDEPATH += $$VR_SDK_OPENVR_INCLUDE
-  LIBS += -L$$VR_SDK_OPENVR_LIB_PATH -lopenvr_api
+  LIBS += -L$$VR_SDK_OPENVR_LIB_PATH
+  LIBS += "$$VR_SDK_OPENVR_LIB_PATH/libopenvr_api.so"
+  #LIBS += -L$$VR_SDK_OPENVR_LIB_PATH -lopenvr_api
   DEFINES+="QT3DVR_COMPILE_WITH_OPENVR=1"
 } else {
   DEFINES+="QT3DVR_COMPILE_WITH_OPENVR=0"

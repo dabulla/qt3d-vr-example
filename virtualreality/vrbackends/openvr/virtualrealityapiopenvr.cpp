@@ -53,16 +53,17 @@ QMatrix4x4 VirtualRealityApiOpenVR::getHmdMatrixProjectionEye( vr::Hmd_Eye nEye 
 {
     if ( !m_hmd )
         return QMatrix4x4();
-    float nearClip = 0.1f;
+    float nearClip = 0.2f;
     float farClip = 1000.0f;
     vr::HmdMatrix44_t mat = m_hmd->GetProjectionMatrix( nEye, nearClip, farClip );
 
-    return QMatrix4x4(
-        mat.m[0][0], mat.m[0][1], mat.m[0][2], mat.m[0][3],
-        mat.m[1][0], mat.m[1][1], mat.m[1][2], mat.m[1][3],
-        mat.m[2][0], mat.m[2][1], mat.m[2][2], mat.m[2][3],
-        mat.m[3][0], mat.m[3][1], mat.m[3][2], mat.m[3][3]
-    );
+    return convertSteamVrMatrixToQMatrix4x4(mat);
+//    return QMatrix4x4(
+//        mat.m[0][0], mat.m[0][1], -mat.m[0][2], mat.m[0][3],
+//        mat.m[1][0], mat.m[1][1], -mat.m[1][2], mat.m[1][3],
+//        mat.m[2][0], mat.m[2][1], -mat.m[2][2], mat.m[2][3],
+//        mat.m[3][0], mat.m[3][1], -mat.m[3][2], mat.m[3][3]
+//    );
 }
 
 //-----------------------------------------------------------------------------
@@ -157,13 +158,27 @@ void VirtualRealityApiOpenVR::setupCameras()
 //-----------------------------------------------------------------------------
 QMatrix4x4 VirtualRealityApiOpenVR::convertSteamVrMatrixToQMatrix4x4( const vr::HmdMatrix34_t matPose )
 {
-    QMatrix4x4 matrixObj;
      return QMatrix4x4(matPose.m[0][0], matPose.m[0][1], matPose.m[0][2], matPose.m[0][3],
                        matPose.m[1][0], matPose.m[1][1], matPose.m[1][2], matPose.m[1][3],
                        matPose.m[2][0], matPose.m[2][1], matPose.m[2][2], matPose.m[2][3],
                        0.0f, 0.0f, 0.0f, 1.0f);
-    return matrixObj;
 }
+
+QMatrix4x4 VirtualRealityApiOpenVR::convertSteamVrMatrixToQMatrix4x4( const vr::HmdMatrix44_t matPose )
+{
+     return QMatrix4x4(matPose.m[0][0], matPose.m[0][1], matPose.m[0][2], matPose.m[0][3],
+                       matPose.m[1][0], matPose.m[1][1], matPose.m[1][2], matPose.m[1][3],
+                       matPose.m[2][0], matPose.m[2][1], matPose.m[2][2], matPose.m[2][3],
+                       matPose.m[3][0], matPose.m[3][1], matPose.m[3][2], matPose.m[3][3]);
+}
+
+//QMatrix4x4 VirtualRealityApiOpenVR::convertSteamVrMatrixToQMatrix4x4( const vr::HmdMatrix44_t matPose )
+//{
+//     return QMatrix4x4(matPose.m[0][0], matPose.m[1][0], matPose.m[2][0], matPose.m[3][0],
+//                       matPose.m[0][1], matPose.m[1][1], matPose.m[2][1], matPose.m[3][1],
+//                       matPose.m[0][2], matPose.m[1][2], matPose.m[2][2], matPose.m[3][2],
+//                       matPose.m[0][3], matPose.m[1][3], matPose.m[2][3], matPose.m[3][3]);
+//}
 
 bool VirtualRealityApiOpenVR::isRuntimeInstalled()
 {
@@ -268,6 +283,7 @@ QSize VirtualRealityApiOpenVR::getRenderTargetSize()
     uint32_t width, height;
     m_hmd->GetRecommendedRenderTargetSize( &width, &height );
     return QSize(width*2, height);
+    //return QSize(width, height);
 }
 
 int VirtualRealityApiOpenVR::timeUntilNextFrame()
@@ -277,11 +293,11 @@ int VirtualRealityApiOpenVR::timeUntilNextFrame()
 
 void VirtualRealityApiOpenVR::swapToHeadset()
 {
-    vr::Texture_t leftEyeTexture = {(void*)m_fbo->texture(), vr::TextureType_OpenGL, vr::ColorSpace_Gamma };
-    vr::VRTextureBounds_t leftViewport = {0.f, 0.f, 0.5f, 1.0f};
+    vr::Texture_t leftEyeTexture = {(void*)m_fbo->handle(), vr::TextureType_OpenGL, vr::ColorSpace_Gamma };
+    vr::VRTextureBounds_t leftViewport = {0.0f, 0.0f, 0.5f, 1.0f};
     vr::VRCompositor()->Submit(vr::Eye_Left, &leftEyeTexture, &leftViewport );
-    vr::Texture_t rightEyeTexture = {(void*)m_fbo->texture(), vr::TextureType_OpenGL, vr::ColorSpace_Gamma };
-    vr::VRTextureBounds_t rightViewport = {0.5f, 0.f, 1.0f, 1.0f};
+    vr::Texture_t rightEyeTexture = {(void*)m_fbo->handle(), vr::TextureType_OpenGL, vr::ColorSpace_Gamma };
+    vr::VRTextureBounds_t rightViewport = {0.5f, 0.0f, 1.0f, 1.0f};
     vr::VRCompositor()->Submit(vr::Eye_Right, &rightEyeTexture, &rightViewport );
     m_poseNewEnough = false;
 //    QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();

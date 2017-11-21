@@ -100,8 +100,8 @@ Entity {
                     id: trackedTransform
                 },
                 PhongMaterial {
-                    diffuse: Qt.rgba(Math.abs(Math.cos(0.5)), 204 / 255, 75 / 255, 1)
                     specular: "white"
+                    ambient: Qt.rgba(1.0*index,1.0*(index-1.0),0.0,1.0)
                     shininess: 20.0
                 }
             ]

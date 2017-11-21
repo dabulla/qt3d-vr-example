@@ -14,14 +14,12 @@
 
 #include "qvirtualrealitymesh.h"
 
-// TO DO: Refactor from Cone
-
-#include "QVirtualRealityGeometry.h"
 #include <Qt3DRender/qbuffer.h>
 #include <Qt3DRender/qbufferdatagenerator.h>
 #include <Qt3DRender/qattribute.h>
 #include <qmath.h>
 #include <QVector3D>
+#include "qvirtualrealitygeometry.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -31,15 +29,6 @@ namespace Qt3DVirtualReality {
 # define _USE_MATH_DEFINES // For MSVC
 #endif
 
-// TO DO: Refactor from Cone
-
-#include "QVirtualRealityMesh.h"
-#include "QVirtualRealityGeometry.h"
-#include <Qt3DRender/qbuffer.h>
-#include <Qt3DRender/qbufferdatagenerator.h>
-#include <Qt3DRender/qattribute.h>
-#include <qmath.h>
-#include <QVector3D>
 
 /*!
  * \qmltype VirtualrealityMesh
