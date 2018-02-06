@@ -257,6 +257,7 @@ void QHeadMountedDisplay::onSceneCreated(QObject *rootObject)
     } else {
         qWarning() << "No Input Settings found, keyboard and mouse events won't be handled";
     }
+    Q_EMIT sceneCreated(m_rootItem);
 }
 
 void QHeadMountedDisplay::run() {

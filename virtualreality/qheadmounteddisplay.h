@@ -83,6 +83,7 @@ signals:
     void requestRun();
     void surfaceChanged(QSurface* surface);
     void renderTargetSizeChanged(QSize renderTargetSize);
+    void sceneCreated(QObject *rootObject);
 
 public slots:
     void run();

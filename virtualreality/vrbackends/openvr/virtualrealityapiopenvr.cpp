@@ -335,7 +335,7 @@ void VirtualRealityApiOpenVR::getTrackedObject(int id, QMatrix4x4 &transform)
         return;
     }
     if( !m_hmd->IsTrackedDeviceConnected( id ) ) {
-        qWarning("Requested VR Device was not connected.");
+        qWarning((QString("Requested VR Device was not connected. (id: ") + QString::number(id) + ")").toLatin1());
         return;
     }
     transform = m_devicePose[ id ];
