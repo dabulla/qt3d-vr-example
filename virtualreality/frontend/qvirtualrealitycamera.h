@@ -27,6 +27,8 @@ namespace Qt3DVirtualReality {
 class QVirtualrealityCamera : public Qt3DCore::QEntity
 {
     Q_OBJECT
+    Q_PROPERTY(Qt3DRender::QCameraLens * leftCameraLens READ leftCameraLens NOTIFY leftCameraLensChanged)
+    Q_PROPERTY(Qt3DRender::QCameraLens * rightCameraLens READ rightCameraLens NOTIFY rightCameraLensChanged)
     Q_PROPERTY(Qt3DCore::QEntity * leftCamera READ leftCamera NOTIFY leftCameraChanged)
     Q_PROPERTY(Qt3DCore::QEntity * rightCamera READ rightCamera NOTIFY rightCameraChanged)
     Q_PROPERTY(float disparity READ disparity NOTIFY disparityChanged)
@@ -62,6 +64,17 @@ public:
     Q_INVOKABLE QMatrix4x4 trackedObjectMatrixTmp(int trackedObjectId);
     Q_INVOKABLE QList<int> trackedObjectsTmp();
     void setVrBackendTmp(QVirtualRealityApiBackend* backend); //only for trackedObjectMatrixTmp
+    Q_INVOKABLE bool isTriggerTmp();
+    Qt3DRender::QCameraLens * leftCameraLens() const
+    {
+        return m_leftCameraLens;
+    }
+
+    Qt3DRender::QCameraLens * rightCameraLens() const
+    {
+        return m_rightCameraLens;
+    }
+
 public Q_SLOTS:
 
     void setOffset(QVector3D offset);
@@ -82,6 +95,8 @@ Q_SIGNALS:
     void leftCameraChanged(Qt3DCore::QEntity * leftCamera);
     void rightCameraChanged(Qt3DCore::QEntity * rightCamera);
     void offsetOrientationChanged(QQuaternion offsetOrientation);
+    void leftCameraLensChanged(Qt3DRender::QCameraLens * leftCameraLens);
+    void rightCameraLensChanged(Qt3DRender::QCameraLens * rightCameraLens);
 
 private:
     Qt3DRender::QCameraLens *m_leftCameraLens;

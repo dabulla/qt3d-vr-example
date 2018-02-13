@@ -100,6 +100,7 @@ public:
     virtual TrackedObjectType getTrackedObjectType(int id) = 0;
     virtual void getTrackedObjectModel(int id, QVector<float> &vertices, QVector<int> &indices, QOpenGLTexture *texture) = 0;
 
+    virtual bool isTriggerTmp() = 0;
     /*!
      * \brief getMirrorTexture
      * Used to get a texture witch can be rendered in another window/thread.

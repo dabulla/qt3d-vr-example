@@ -143,6 +143,16 @@ void VirtualRealityApiOpenVR::updateHmdMatrixPose()
         m_hmdPose = m_devicePose[vr::k_unTrackedDeviceIndex_Hmd];
         m_hmdPose = m_hmdPose.inverted();
     }
+
+    m_isTrigger = false;
+    for( vr::TrackedDeviceIndex_t unDevice = 0; unDevice < vr::k_unMaxTrackedDeviceCount; unDevice++ )
+    {
+        vr::VRControllerState_t state;
+        if( m_hmd->GetControllerState( unDevice, &state, sizeof(state) ) )
+        {
+            m_isTrigger |= state.ulButtonPressed != 0;
+        }
+    }
 }
 
 void VirtualRealityApiOpenVR::setupCameras()
@@ -188,6 +198,7 @@ bool VirtualRealityApiOpenVR::isRuntimeInstalled()
 VirtualRealityApiOpenVR::VirtualRealityApiOpenVR()
     : m_fbo(nullptr)
     , m_poseNewEnough(false)
+    , m_isTrigger(false)
 {
 
 }
@@ -344,6 +355,10 @@ void VirtualRealityApiOpenVR::getTrackedObject(int id, QMatrix4x4 &transform)
 Qt3DVirtualReality::QVirtualRealityApiBackend::TrackedObjectType VirtualRealityApiOpenVR::getTrackedObjectType(int id)
 {
     return Qt3DVirtualReality::QVirtualRealityApiBackend::Other;
+}
+bool VirtualRealityApiOpenVR::isTriggerTmp()
+{
+    return m_isTrigger;
 }
 
 void VirtualRealityApiOpenVR::getTrackedObjectModel(int id, QVector<float> &vertices, QVector<int> &indices, QOpenGLTexture *texture)

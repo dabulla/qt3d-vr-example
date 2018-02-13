@@ -66,6 +66,8 @@ void QVirtualrealityCamera::setProjections(const QMatrix4x4 &leftProjection, con
 {
     m_leftCameraLens->setProjectionMatrix(leftProjection);
     m_rightCameraLens->setProjectionMatrix(rightProjection);
+    Q_EMIT leftCameraLensChanged(m_leftCameraLens);
+    Q_EMIT rightCameraLensChanged(m_rightCameraLens);
 }
 
 void QVirtualrealityCamera::update(const QMatrix4x4 &viewLeft, const QMatrix4x4 &viewRight)
@@ -162,6 +164,14 @@ QList<int> QVirtualrealityCamera::trackedObjectsTmp()
 {
     if(!m_apibackend) return QList<int>();
     return m_apibackend->currentlyTrackedObjects();
+}
+
+bool Qt3DVirtualReality::QVirtualrealityCamera::isTriggerTmp()
+{
+
+    if(!m_apibackend) return false;
+    QMatrix4x4 mat;
+    return m_apibackend->isTriggerTmp();
 }
 
 void QVirtualrealityCamera::setVrBackendTmp(QVirtualRealityApiBackend *backend)

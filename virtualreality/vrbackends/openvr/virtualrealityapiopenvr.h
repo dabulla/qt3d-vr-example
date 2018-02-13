@@ -50,6 +50,7 @@ public:
 
     void getMirrorTexture(QOpenGLTexture *outMirrorTexture);
 
+    bool isTriggerTmp();
 private:
     QOpenGLFramebufferObject *m_fbo;
     double m_sensorSampleTime;
@@ -71,6 +72,8 @@ private:
     QMatrix4x4 m_hmdPose;
     QMatrix4x4 m_eyePosLeft;
     QMatrix4x4 m_eyePosRight;
+
+    bool m_isTrigger;
 
     QMatrix4x4 getHmdMatrixProjectionEye(vr::Hmd_Eye nEye);
     QMatrix4x4 getHmdMatrixPoseEye(vr::Hmd_Eye nEye);
