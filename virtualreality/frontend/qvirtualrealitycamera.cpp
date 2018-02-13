@@ -15,6 +15,7 @@
 #include "qvirtualrealitycamera.h"
 #include <Qt3DCore/QTransform>
 #include <QMatrix>
+#include <QVector4D>
 
 #include <qqml.h>
 
@@ -74,10 +75,14 @@ void QVirtualrealityCamera::update(const QMatrix4x4 &viewLeft, const QMatrix4x4 
 //    Matrix4f view         = Matrix4f::LookAtRH(pos, pos + finalForward, finalUp);
     //QMatrix4x4 viewLeft;
     //viewLeft.lookAt(leftPos, leftPos + leftOrient.rotatedVector(QVector3D(0.0,0.0,1.0)), leftOrient.rotatedVector(QVector3D(0.0,1.0,0.0)));
-    m_leftTransform->setMatrix(viewLeft);
+    QMatrix4x4 l(viewLeft);
+    QMatrix4x4 r(viewRight);
+    l.translate(-m_offset);
+    r.translate(-m_offset);
+    m_leftTransform->setMatrix(l);
     //QMatrix4x4 viewRight;
     //viewRight.lookAt(rightPos, rightPos + rightOrient.rotatedVector(QVector3D(0.0,0.0,1.0)), rightOrient.rotatedVector(QVector3D(0.0,1.0,0.0)));
-    m_rightTransform->setMatrix(viewRight);
+    m_rightTransform->setMatrix(r);
 
 
 //    Matrix4f   view = Matrix4f(orientation.Inverted()) * Matrix4f::Translation(-WorldEyePos);
@@ -148,7 +153,9 @@ QMatrix4x4 QVirtualrealityCamera::trackedObjectMatrixTmp(int trackedObjectId)
     if(!m_apibackend) return QMatrix4x4();
     QMatrix4x4 mat;
     m_apibackend->getTrackedObject(trackedObjectId, mat);
-    return mat;
+    QMatrix4x4 off;
+    off.translate(m_offset);
+    return off*mat;
 }
 
 QList<int> QVirtualrealityCamera::trackedObjectsTmp()
