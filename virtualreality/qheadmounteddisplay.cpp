@@ -287,7 +287,7 @@ void QHeadMountedDisplay::run() {
     QList<QVirtualRealityMesh*> vrGeometries;
     if(m_rootItem) {
         vrCamera = m_rootItem->findChild<QVirtualrealityCamera *>();
-        QList<QVirtualRealityMesh*> vrGeometries = m_rootItem->findChildren<QVirtualRealityMesh*>();
+        vrGeometries = m_rootItem->findChildren<QVirtualRealityMesh*>();
     }
     m_apibackend->bindFrambufferObject(m_hmdId);
     for(QList<QVirtualRealityMesh*>::iterator iter(vrGeometries.begin()); iter != vrGeometries.end(); ++iter) {

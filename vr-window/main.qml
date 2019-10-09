@@ -75,7 +75,8 @@ Entity {
     NodeInstantiator {
         id: trackedObjectsRepeater
         // TO DO: a model does not yet work here (array with indices). temporarily using a number
-        model: 5 // default: 1 -> head, 2&3 -> base station, 4&5 -> controller/hands
+        model: 4 // default: 1 -> head, 2&3 -> base station, 4&5 -> controller/hands
+            // different setup? : 1&2 -> base stations, 3&4 -> controllers, 5 -> ?
         delegate: Entity {
             Timer {
                 running: true
@@ -87,15 +88,15 @@ Entity {
                 }
             }
             components: [
-//                TrackedObjectMesh {
-//                    trackedObjectId: index+1
-//                }
-                TorusMesh {
-                    radius: 0.1
-                    minorRadius: 0.05
-                    rings: 100
-                    slices: 20
+                TrackedObjectMesh {
+                    trackedObjectId: index+1
                 },
+//                TorusMesh {
+//                    radius: 0.1
+//                    minorRadius: 0.05
+//                    rings: 100
+//                    slices: 20
+//                },
                 Transform {
                     id: trackedTransform
                 },

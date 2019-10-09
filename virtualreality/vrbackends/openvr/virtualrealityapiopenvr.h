@@ -20,6 +20,15 @@
 #include "openvr.h"
 class QSurfaceFormat;
 
+struct TrackedObjectModel {
+    TrackedObjectModel(QVector<float> t_vertices, QVector<int> t_indices, QOpenGLTexture* t_texture) :
+        vertices(t_vertices), indices(t_indices), texture(t_texture) {}
+
+    QVector<float> vertices;
+    QVector<int> indices;
+    QOpenGLTexture* texture;
+};
+
 class VirtualRealityApiOpenVR : public Qt3DVirtualReality::QVirtualRealityApiBackend
 {
 public:
@@ -84,6 +93,8 @@ private:
     void processVrEvent(const vr::VREvent_t &event);
     void setupCameras();
     bool m_poseNewEnough; //TO DO: openvr in example only updates poses once a frame
+
+    QMap<int, TrackedObjectModel*> m_models;
 };
 
 #endif

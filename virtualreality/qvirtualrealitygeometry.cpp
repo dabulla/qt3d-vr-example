@@ -176,7 +176,7 @@ void QVirtualRealityGeometryPrivate::init()
     m_texCoordAttribute->setCount(nVerts);
 
     m_indexAttribute->setAttributeType(QAttribute::IndexAttribute);
-    m_indexAttribute->setVertexBaseType(QAttribute::UnsignedShort);
+    m_indexAttribute->setVertexBaseType(QAttribute::UnsignedInt);
     m_indexAttribute->setBuffer(m_indexBuffer);
 
     m_indexAttribute->setCount(faces * 3);

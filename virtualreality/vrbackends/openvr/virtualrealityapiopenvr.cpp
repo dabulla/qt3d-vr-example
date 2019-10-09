@@ -368,6 +368,13 @@ void VirtualRealityApiOpenVR::getTrackedObjectModel(int id, QVector<float> &vert
         return;
     }
 
+    if (m_models.contains(id)){
+        vertices = m_models[id]->vertices;
+        indices = m_models[id]->indices;
+        texture = m_models[id]->texture;
+        return;
+    }
+
     std::string sRenderModelName = getTrackedDeviceString( m_hmd, id, vr::Prop_RenderModelName_String );
 
     //TODO: load renderModels only once
@@ -382,7 +389,7 @@ void VirtualRealityApiOpenVR::getTrackedObjectModel(int id, QVector<float> &vert
     }
 
     if ( error != vr::VRRenderModelError_None ) {
-        qWarning( "Unable to load render model %s - %s\n", sRenderModelName, vr::VRRenderModels()->GetRenderModelErrorNameFromEnum( error ) );
+        qWarning( "Unable to load render model %s - %s\n", sRenderModelName.c_str(), vr::VRRenderModels()->GetRenderModelErrorNameFromEnum( error ) );
         return;
     }
 
@@ -395,7 +402,7 @@ void VirtualRealityApiOpenVR::getTrackedObjectModel(int id, QVector<float> &vert
     }
 
     if ( error != vr::VRRenderModelError_None ) {
-        qWarning( "Unable to load render texture id:%d for render model %s\n", pModel->diffuseTextureId, sRenderModelName );
+        qWarning( "Unable to load render texture id:%d for render model %s\n", pModel->diffuseTextureId, sRenderModelName.c_str() );
         vr::VRRenderModels()->FreeRenderModel( pModel );
         return;
     }
@@ -413,6 +420,8 @@ void VirtualRealityApiOpenVR::getTrackedObjectModel(int id, QVector<float> &vert
     //texture = new QOpenGLTexture(QOpenGLTexture::BindingTarget2D);
     texture->setSize(pTexture->unWidth, pTexture->unHeight);
     texture->setData( QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, pTexture->rubTextureMapData );
+
+    m_models.insert(id,new TrackedObjectModel(vertices, indices, texture));
 
     vr::VRRenderModels()->FreeRenderModel( pModel );
     vr::VRRenderModels()->FreeTexture( pTexture );
