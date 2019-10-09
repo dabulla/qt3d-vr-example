@@ -1,3 +1,17 @@
+# https://dev.to/nishina555/how-to-ignore-files-already-managed-with-git-locally-19oo
+# skip file as it is user specific
+# $ git update-index --skip-worktree vr-sdks.pri ( adjust paths to openvr headers and libs )
+# $ git update-index --skip-worktree virtualreality/virtualreality.pro ( adjust openvr lib name )
+
+# user file
+# *.user
+qt3d-vr-example.pro.user
+
+# autosave
+*.autosave
+
+
+
 # Prerequisites
 *.d
 
