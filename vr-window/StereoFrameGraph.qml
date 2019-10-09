@@ -66,7 +66,7 @@ Viewport {
         // By default reset to the default if not specified
         ClearBuffers {
             buffers: ClearBuffers.ColorDepthBuffer
-            clearColor: Qt.rgba(0.2,0.9,0.9,0.5)
+            clearColor: "white" //Qt.rgba(0.2,0.9,0.9,0.5)
             NoDraw {} // We just want to clear the buffers
         }
 

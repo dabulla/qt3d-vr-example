@@ -37,7 +37,7 @@ Entity {
     // Camera
     VrCamera {
         id: vrCam
-        offset: Qt.vector3d(80.0,-90.0,0.0)
+        //offset: Qt.vector3d(80.0,-90.0,0.0)
         //offsetOrientation:
         //offset: cameraProps.circlePosition.plus(Qt.vector3d(0, 45 * Math.sin(cameraProps.circleRotation * 2), 0)).plus(cameraProps.tan.times(-2))
     }

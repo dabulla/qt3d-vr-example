@@ -75,7 +75,7 @@ QMatrix4x4 VirtualRealityApiOpenVR::getHmdMatrixPoseEye( vr::Hmd_Eye nEye )
         return QMatrix4x4();
 
     vr::HmdMatrix34_t mat = m_hmd->GetEyeToHeadTransform( nEye );
-    return convertSteamVrMatrixToQMatrix4x4(mat).inverted();
+    return convertSteamVrMatrixToQMatrix4x4(mat);//.inverted();
 }
 
 //-----------------------------------------------------------------------------
@@ -141,7 +141,7 @@ void VirtualRealityApiOpenVR::updateHmdMatrixPose()
     if ( m_trackedDevicePose[vr::k_unTrackedDeviceIndex_Hmd].bPoseIsValid )
     {
         m_hmdPose = m_devicePose[vr::k_unTrackedDeviceIndex_Hmd];
-        m_hmdPose = m_hmdPose.inverted();
+        //m_hmdPose = m_hmdPose.inverted();
     }
 
     m_isTrigger = false;
