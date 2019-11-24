@@ -178,18 +178,17 @@ void VirtualRealityApiOvr::getEyeMatrices(QMatrix4x4 &leftEye, QMatrix4x4 &right
     ovrQuatf orientLeft = m_eyeRenderPose[ovrEye_Left].Orientation;
     ovrQuatf orientRight = m_eyeRenderPose[ovrEye_Right].Orientation;
 
-    Matrix4f finalRollPitchYaw = Matrix4f(orientLeft);
+    QVector3D zero(0.0f,0.0f,0.0f);
+    Matrix4f finalRollPitchYaw = Matrix4f(orientLeft).Transposed();
     Vector3f finalUp = finalRollPitchYaw.Transform(Vector3f(0, 1, 0));
     Vector3f finalForward = finalRollPitchYaw.Transform(Vector3f(0, 0, -1));
-    Vector3f shiftedEyePos = Vector3f(posLeft);
-    Vector3f center = shiftedEyePos + finalForward;
-    leftEye.lookAt(QVector3D(posLeft.x, posLeft.y, posLeft.z), QVector3D(center.x, center.y, center.z), QVector3D(finalUp.x, finalUp.y, finalUp.z));
-    finalRollPitchYaw = Matrix4f(orientRight);
+    leftEye.translate(QVector3D(posLeft.x, posLeft.y, posLeft.z));
+    leftEye.lookAt(zero, QVector3D(finalForward.x, finalForward.y, finalForward.z), QVector3D(finalUp.x, finalUp.y, finalUp.z));
+    finalRollPitchYaw = Matrix4f(orientRight).Transposed();
     finalUp = finalRollPitchYaw.Transform(Vector3f(0, 1, 0));
     finalForward = finalRollPitchYaw.Transform(Vector3f(0, 0, -1));
-    shiftedEyePos = Vector3f(posRight);
-    center = shiftedEyePos + finalForward;
-    rightEye.lookAt(QVector3D(posRight.x, posRight.y, posRight.z), QVector3D(center.x, center.y, center.z), QVector3D(finalUp.x, finalUp.y, finalUp.z));
+    rightEye.translate(QVector3D(posRight.x, posRight.y, posRight.z));
+    rightEye.lookAt(zero, QVector3D(finalForward.x, finalForward.y, finalForward.z), QVector3D(finalUp.x, finalUp.y, finalUp.z));
 }
 
 void VirtualRealityApiOvr::getProjectionMatrices(QMatrix4x4 &leftProjection, QMatrix4x4 &rightProjection)
@@ -234,6 +233,12 @@ void VirtualRealityApiOvr::getTrackedObjectModel(int id, QVector<float> &vertice
 void VirtualRealityApiOvr::getMirrorTexture(QOpenGLTexture *outMirrorTexture)
 {
 
+}
+
+bool VirtualRealityApiOvr::isTriggerTmp()
+{
+    //TO DO: check for real trigger
+    return false;
 }
 
 qreal VirtualRealityApiOvr::refreshRate(int hmdId) const

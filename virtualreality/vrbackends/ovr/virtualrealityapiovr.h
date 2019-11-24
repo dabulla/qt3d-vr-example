@@ -51,6 +51,7 @@ public:
 
     void getMirrorTexture(QOpenGLTexture *outMirrorTexture);
 
+    bool isTriggerTmp();
 private:
     bool m_sessionStarted;
     ovrSession m_session;
